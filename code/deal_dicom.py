@@ -1,7 +1,9 @@
+from asyncore import read
 import numpy as np
 import pydicom as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import cv2
 
 def extract_contour(contour_dcm_path, contour_npy_path):
     ds = pd.dcmread({contour_dcm_path})
@@ -30,8 +32,33 @@ def plot_contour(contour_npy_path):
     ax.plot(X,Y,Z, marker='o', linestyle='None')
     plt.show()
 
-contour_file_path = '/home/uchiyama/work/image/Phantom/DICOMdata/CT_Contour'
-contour_dcm_path = f'{contour_file_path}/ct_contour.dcm'
-contour_npy_path = f'{contour_file_path}/ct_contour.npy'
-#extract_contour(contour_dcm_path, contour_npy_path)
-plot_contour(contour_npy_path)
+def readDicom2jpeg(dcm_fnm, save_fnm):
+    ds = pd.dcmread(dcm_fnm)
+    wc = ds.WindowCenter
+    ww = ds.WindowWidth
+    img = ds.pixel_array
+
+    max = wc + ww/2
+    min = wc - ww/2
+
+    #ウィンドウ処理
+    img = 255 * (img - min)/(max - min)
+    img[img > 255] = 255
+    img[img < 0] = 0
+
+    img = img[220:300,255:335]
+    cv2.imwrite(save_fnm, img, [cv2.IMWRITE_JPEG_QUALITY, 100])
+
+if __name__ == '__main__':
+
+    dcm_path = '/home/uchiyama/work/image/Phantom/DICOMdata'
+    vxm_path = '/home/uchiyama/work/VoxelMorph'
+    """contour_file_path = '{dcm_path}/CT_Contour'
+    contour_dcm_path = f'{contour_file_path}/ct_contour.dcm'
+    contour_npy_path = f'{contour_file_path}/ct_contour.npy'
+    #extract_contour(contour_dcm_path, contour_npy_path)
+    plot_contour(contour_npy_path)"""
+    j=0
+    for i in range(36, 58):
+        readDicom2jpeg(f'{dcm_path}/MRI/MRI_{i+1}.dcm', f'{vxm_path}/image/MRI/MRI_{j}.jpg')
+        j+=1
