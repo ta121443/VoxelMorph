@@ -46,7 +46,7 @@ def readDicom2jpeg(dcm_fnm, save_fnm):
     img[img > 255] = 255
     img[img < 0] = 0
 
-    img = img[220:300,255:335]
+    #img = img[220:300,255:335]
     cv2.imwrite(save_fnm, img, [cv2.IMWRITE_JPEG_QUALITY, 100])
 
 if __name__ == '__main__':
@@ -60,5 +60,5 @@ if __name__ == '__main__':
     plot_contour(contour_npy_path)"""
     j=0
     for i in range(36, 58):
-        readDicom2jpeg(f'{dcm_path}/MRI/MRI_{i+1}.dcm', f'{vxm_path}/image/MRI/MRI_{j}.jpg')
+        readDicom2jpeg(f'{dcm_path}/CT/CT_{i+1}.dcm', f'{vxm_path}/CT_{j}.jpg')
         j+=1
