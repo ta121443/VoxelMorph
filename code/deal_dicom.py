@@ -6,16 +6,14 @@ from mpl_toolkits.mplot3d import Axes3D
 import cv2
 
 def extract_contour(contour_dcm_path, contour_npy_path):
-    ds = pd.dcmread({contour_dcm_path})
+    ds = pd.dcmread(contour_dcm_path)
     st_data = np.array([])
     for i in range(len(ds.ROIContourSequence[0].ContourSequence)):
         tmp = np.int16(ds.ROIContourSequence[0].ContourSequence[i].ContourData)
         tmp = tmp.reshape(-1, 3)
         st_data = np.append(st_data, tmp)
     st_data = st_data.reshape(-1, 3)
-    print(st_data.shape)
-    print(st_data[0:10])
-    np.save({contour_npy_path}, st_data)
+    np.save(contour_npy_path, st_data)
 
 def plot_contour(contour_npy_path):
     contour = np.load(contour_npy_path)
@@ -51,14 +49,17 @@ def readDicom2jpeg(dcm_fnm, save_fnm):
 
 if __name__ == '__main__':
 
-    dcm_path = '/home/uchiyama/work/image/Phantom/DICOMdata'
+    """dcm_path = '/home/uchiyama/work/VoxelMorph/MR-MR-Person3/contour.dcm'
     vxm_path = '/home/uchiyama/work/VoxelMorph'
-    """contour_file_path = '{dcm_path}/CT_Contour'
-    contour_dcm_path = f'{contour_file_path}/ct_contour.dcm'
-    contour_npy_path = f'{contour_file_path}/ct_contour.npy'
-    #extract_contour(contour_dcm_path, contour_npy_path)
-    plot_contour(contour_npy_path)"""
+    plot_contour(contour_npy_path)
     j=0
     for i in range(36, 58):
         readDicom2jpeg(f'{dcm_path}/CT/CT_{i+1}.dcm', f'{vxm_path}/CT_{j}.jpg')
-        j+=1
+        j+=1"""
+    
+    contour_file_path = '/home/uchiyama/work/VoxelMorph/MR-MR/Person1'
+    contour_dcm_path = f'{contour_file_path}/contour.dcm'
+    contour_npy_path = f'{contour_file_path}/contour.npy'
+    extract_contour(contour_dcm_path, contour_npy_path)
+    plot_contour(contour_npy_path)
+    
